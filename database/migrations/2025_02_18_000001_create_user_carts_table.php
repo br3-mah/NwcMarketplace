@@ -8,12 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('user_carts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->longText('data')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('user_carts')) {
+            Schema::create('user_carts', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('user_id')->nullable();
+                $table->longText('data')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void

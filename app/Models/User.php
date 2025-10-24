@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -169,6 +170,46 @@ class User extends Authenticatable
     public function packages()
     {
         return $this->hasMany('App\Models\Package','user_id');
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_user')->withTimestamps();
+    }
+
+    public function assignRole(string|Role $role): Role
+    {
+        $roleModel = $role instanceof Role ? $role : $this->resolveRoleModel((string) $role);
+
+        $this->roles()->syncWithoutDetaching([$roleModel->id]);
+
+        return $roleModel;
+    }
+
+    public function syncRoles(array $roles): void
+    {
+        $roleIds = collect($roles)
+            ->filter()
+            ->map(function ($role) {
+                $roleModel = $role instanceof Role ? $role : $this->resolveRoleModel((string) $role);
+                return $roleModel->id;
+            })
+            ->unique()
+            ->values()
+            ->all();
+
+        $this->roles()->sync($roleIds);
+    }
+
+    protected function resolveRoleModel(string $role): Role
+    {
+        $normalized = strtolower(trim($role));
+        $displayName = ucfirst($normalized);
+
+        return Role::firstOrCreate(
+            ['name' => $displayName, 'section' => 'user_roles'],
+            ['name' => $displayName, 'section' => 'user_roles']
+        );
     }
 
     public function reports()

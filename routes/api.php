@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ProductImageController;
 use App\Http\Controllers\Api\V1\ProductInventoryController;
 use App\Http\Controllers\Api\V1\ProductSearchController;
+use App\Http\Controllers\Api\V1\ConversationController as ApiConversationController;
+use App\Http\Controllers\Api\V1\ConversationMessageController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +50,11 @@ Route::prefix('v1')->group(function () {
         Route::put('products/{product}/inventory', [ProductInventoryController::class, 'update']);
 
         Route::post('products/{product}/images', [ProductImageController::class, 'store']);
+
+        Route::get('conversations', [ApiConversationController::class, 'index']);
+        Route::post('conversations', [ApiConversationController::class, 'store']);
+        Route::get('conversations/{conversation}/messages', [ConversationMessageController::class, 'index']);
+        Route::post('conversations/{conversation}/messages', [ConversationMessageController::class, 'store']);
 
         Route::get('carts/{buyer}', [ApiCartController::class, 'index'])
             ->whereNumber('buyer');

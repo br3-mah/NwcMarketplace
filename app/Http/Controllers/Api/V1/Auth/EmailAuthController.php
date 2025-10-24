@@ -21,19 +21,28 @@ class EmailAuthController extends Controller
     {
         $role = strtolower($role);
 
-        [$user, $otp] = $this->signInService->startEmail($request->validated());
+        [$user, $otp, $meta] = $this->signInService->startEmail($request->validated(), $role);
 
-        $response = [
-            'message' => sprintf(
+        $message = $meta['has_role']
+            ? sprintf(
+                'Welcome back! OTP sent to %s',
+                AuthHelper::maskedIdentifier(OtpService::CHANNEL_EMAIL, $otp->identifier)
+            )
+            : sprintf(
                 'OTP sent to %s',
                 AuthHelper::maskedIdentifier(OtpService::CHANNEL_EMAIL, $otp->identifier)
-            ),
+            );
+
+        $response = [
+            'message' => $message,
             'data' => [
                 'user_id' => $user->id,
                 'channel' => OtpService::CHANNEL_EMAIL,
                 'role' => $role,
                 'identifier' => $otp->identifier,
                 'expires_at' => $otp->expires_at?->toIso8601String(),
+                'is_existing_user' => $meta['is_existing_user'],
+                'has_role' => $meta['has_role'],
             ],
         ];
 
@@ -97,6 +106,7 @@ class EmailAuthController extends Controller
             'phone' => $user->phone,
             'phone_verified_at' => $user->phone_verified_at?->toIso8601String(),
             'email_verified_at' => $user->email_verified_at?->toIso8601String(),
+            'roles' => $user->roles->pluck('name')->map(fn ($name) => strtolower($name))->values()->all(),
         ];
     }
 }

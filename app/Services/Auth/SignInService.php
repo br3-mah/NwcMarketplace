@@ -18,15 +18,24 @@ class SignInService
     {
     }
 
-    public function startPhone(array $input): array
+    public function startPhone(array $input, string $role): array
     {
         $phone = $this->otpService->normalizeIdentifier(OtpService::CHANNEL_PHONE, $input['phone']);
         $gender = AuthHelper::normalizeGender($input['gender'] ?? null);
         $firstName = trim((string) $input['fname']);
         $lastName = trim((string) $input['lname']);
+        $normalizedRole = $this->normalizeRole($role);
 
-        return DB::transaction(function () use ($phone, $gender, $firstName, $lastName) {
+        return DB::transaction(function () use ($phone, $gender, $firstName, $lastName, $normalizedRole) {
             $user = User::firstOrNew(['phone' => $phone]);
+            $existed = $user->exists;
+            $hadRole = false;
+
+            if ($existed) {
+                $hadRole = $user->roles()
+                    ->where('name', ucfirst($normalizedRole))
+                    ->exists();
+            }
 
             $user->fname = $firstName;
             $user->lname = $lastName;
@@ -56,11 +65,18 @@ class SignInService
                 [
                     'context' => 'phone_signin',
                     'requested_at' => now()->toIso8601String(),
+                    'role' => $normalizedRole,
                 ],
                 $user
             );
 
-            return [$user, $otp];
+            $user->load('roles');
+
+            return [$user, $otp, [
+                'is_existing_user' => $existed,
+                'has_role' => $hadRole,
+                'role' => $normalizedRole,
+            ]];
         });
     }
 
@@ -79,22 +95,36 @@ class SignInService
         $user->phone_verified_at = Carbon::now();
         $user->phone_verified = 'Yes';
         $user->status = 1;
+
+        $this->assignUserRole($user, $otp->payload['role'] ?? null);
+
         $user->save();
+
+        $user->loadMissing('roles');
 
         $token = $user->createToken('api')->plainTextToken;
 
         return [$user, $token];
     }
 
-    public function startEmail(array $input): array
+    public function startEmail(array $input, string $role): array
     {
         $email = $this->otpService->normalizeIdentifier(OtpService::CHANNEL_EMAIL, $input['email']);
         $gender = AuthHelper::normalizeGender($input['gender'] ?? null);
         $firstName = trim((string) $input['fname']);
         $lastName = trim((string) $input['lname']);
+        $normalizedRole = $this->normalizeRole($role);
 
-        [$user, $otp] = DB::transaction(function () use ($email, $gender, $firstName, $lastName) {
+        [$user, $otp, $meta] = DB::transaction(function () use ($email, $gender, $firstName, $lastName, $normalizedRole) {
             $user = User::firstOrNew(['email' => $email]);
+            $existed = $user->exists;
+            $hadRole = false;
+
+            if ($existed) {
+                $hadRole = $user->roles()
+                    ->where('name', ucfirst($normalizedRole))
+                    ->exists();
+            }
 
             $user->fname = $firstName;
             $user->lname = $lastName;
@@ -116,16 +146,23 @@ class SignInService
                 [
                     'context' => 'email_signin',
                     'requested_at' => now()->toIso8601String(),
+                    'role' => $normalizedRole,
                 ],
                 $user
             );
 
-            return [$user, $otp];
+            $user->load('roles');
+
+            return [$user, $otp, [
+                'is_existing_user' => $existed,
+                'has_role' => $hadRole,
+                'role' => $normalizedRole,
+            ]];
         });
 
         $this->sendEmailOtp($user, $otp);
 
-        return [$user, $otp];
+        return [$user, $otp, $meta];
     }
 
     public function resendEmail(string $email): UserAuthCode
@@ -133,6 +170,12 @@ class SignInService
         $normalizedEmail = $this->otpService->normalizeIdentifier(OtpService::CHANNEL_EMAIL, $email);
 
         $user = User::where('email', $normalizedEmail)->first();
+        $latestOtp = UserAuthCode::where('channel', OtpService::CHANNEL_EMAIL)
+            ->where('identifier', $normalizedEmail)
+            ->orderByDesc('id')
+            ->first();
+        $roleFromUser = $user?->roles()->pluck('name')->first();
+        $resolvedRole = $this->normalizeRole($latestOtp?->payload['role'] ?? $roleFromUser);
 
         if (!$user) {
             throw ValidationException::withMessages([
@@ -152,6 +195,7 @@ class SignInService
             [
                 'context' => 'email_resend',
                 'requested_at' => now()->toIso8601String(),
+                'role' => $resolvedRole,
             ],
             $user
         );
@@ -176,7 +220,12 @@ class SignInService
         $user->email_verified = 'Yes';
         $user->email_verified_at = Carbon::now();
         $user->status = 1;
+
+        $this->assignUserRole($user, $otp->payload['role'] ?? null);
+
         $user->save();
+
+        $user->loadMissing('roles');
 
         $token = $user->createToken('api')->plainTextToken;
 
@@ -199,5 +248,31 @@ class SignInService
                 'message' => $exception->getMessage(),
             ]);
         }
+    }
+
+    private function normalizeRole(?string $role): string
+    {
+        $allowed = ['admin', 'user', 'vendor'];
+
+        $normalized = strtolower(trim((string) $role));
+
+        return in_array($normalized, $allowed, true) ? $normalized : 'user';
+    }
+
+    private function assignUserRole(User $user, ?string $role): void
+    {
+        $normalized = $this->normalizeRole($role);
+
+        switch ($normalized) {
+            case 'vendor':
+                $user->is_vendor = 2;
+                break;
+            default:
+                if ($user->is_vendor === 2) {
+                    $user->is_vendor = 0;
+                }
+        }
+
+        $user->syncRoles([$normalized]);
     }
 }
