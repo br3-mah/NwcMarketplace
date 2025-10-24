@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ConversationMessageResource extends JsonResource
+class DisputeMessageResource extends JsonResource
 {
     public function toArray($request): array
     {
         return [
             'id' => (int) $this->id,
-            'conversation_id' => (int) $this->conversation_id,
-            'sent_user' => (int) $this->sent_user,
-            'recieved_user' => (int) $this->recieved_user,
+            'dispute_id' => $this->dispute_id,
+            'user_id' => $this->user_id,
             'message' => $this->message,
+            'attachments' => $this->attachments,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }
 }
+

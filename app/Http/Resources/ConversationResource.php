@@ -2,27 +2,25 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ConversationResource extends Resource
+class ConversationResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
-            'id' => $this->id,
+            'id' => (int) $this->id,
             'subject' => $this->subject,
-            'sent_user' => $this->sent_user,
-            'recieved_user' => $this->recieved_user,
+            'sent_user' => (int) $this->sent_user,
+            'recieved_user' => (int) $this->recieved_user,
             'message' => $this->message,
-            'messages' => ConversationMessageResource::collection($this->messages),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-          ];
+            'latest_message' => $this->when(
+                $this->relationLoaded('messages') && $this->messages->isNotEmpty(),
+                fn () => new ConversationMessageResource($this->messages->first())
+            ),
+            'messages' => ConversationMessageResource::collection($this->whenLoaded('messages')),
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 }

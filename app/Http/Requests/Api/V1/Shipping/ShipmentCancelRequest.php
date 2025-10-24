@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Http\Requests\Api\V1\Shipping;
+
+use App\Http\Requests\Api\ApiRequest;
+
+class ShipmentCancelRequest extends ApiRequest
+{
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'reason' => $this->input('reason', $this->input('Reason')),
+        ]);
+    }
+
+    public function rules(): array
+    {
+        return [
+            'reason' => ['nullable', 'string', 'max:5000'],
+        ];
+    }
+}
+

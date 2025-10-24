@@ -99,9 +99,214 @@
 
 
     @yield('css')
+    <style>
+        .nwcm-header {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background: rgba(11, 31, 51, 0.96);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nwcm-header__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem clamp(1.5rem, 4vw, 3.5rem);
+            gap: 1.5rem;
+        }
+
+        .nwcm-brand {
+            display: inline-flex;
+            gap: .75rem;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .nwcm-brand__icon {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #31c6f4, #0b85c4);
+            color: #f6fbff;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nwcm-brand__text span {
+            display: block;
+            font-weight: 600;
+            color: #f6fbff;
+            font-size: 1.1rem;
+        }
+
+        .nwcm-brand__text small {
+            display: block;
+            margin-top: .15rem;
+            font-size: .8rem;
+            color: rgba(255, 255, 255, 0.58);
+            letter-spacing: .04em;
+        }
+
+        .nwcm-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nwcm-nav a {
+            position: relative;
+            font-size: .95rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.72);
+            text-decoration: none;
+            padding-bottom: .15rem;
+        }
+
+        .nwcm-nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 100%;
+            height: 2px;
+            background: #31c6f4;
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform .2s ease;
+        }
+
+        .nwcm-nav a:hover,
+        .nwcm-nav a:focus {
+            color: #f6fbff;
+        }
+
+        .nwcm-nav a:hover::after,
+        .nwcm-nav a:focus::after {
+            transform: scaleX(1);
+        }
+
+        .nwcm-header__actions {
+            display: flex;
+            gap: .75rem;
+            align-items: center;
+        }
+
+        .nwcm-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: .55rem 1.4rem;
+            font-weight: 600;
+            font-size: .9rem;
+            border: 1px solid transparent;
+            text-decoration: none;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .nwcm-btn--secondary {
+            color: rgba(255, 255, 255, 0.78);
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .nwcm-btn--primary {
+            color: #0b1f33;
+            background: #31c6f4;
+            box-shadow: 0 10px 25px rgba(49, 198, 244, 0.25);
+        }
+
+        .nwcm-btn:hover,
+        .nwcm-btn:focus {
+            transform: translateY(-1px);
+        }
+
+        .nwcm-btn--primary:hover,
+        .nwcm-btn--primary:focus {
+            box-shadow: 0 14px 28px rgba(49, 198, 244, 0.28);
+        }
+
+        .nwcm-header__toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #f6fbff;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .nwcm-nav,
+            .nwcm-header__actions {
+                display: none;
+            }
+
+            .nwcm-header__toggle {
+                display: inline-flex;
+            }
+
+            .nwcm-header.is-open .nwcm-nav,
+            .nwcm-header.is-open .nwcm-header__actions {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                padding: 1rem clamp(1.5rem, 4vw, 3.5rem) 1.5rem;
+                gap: 1rem;
+            }
+
+            .nwcm-header.is-open .nwcm-nav {
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                padding-top: 1.25rem;
+            }
+
+            .nwcm-header.is-open .nwcm-nav a::after {
+                display: none;
+            }
+
+            .nwcm-header.is-open .nwcm-header__actions {
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                padding-top: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="page_wrapper" class="bg-white">
+        <header class="nwcm-header" data-header>
+            <div class="nwcm-header__inner">
+                <a class="nwcm-brand" href="{{ url('/') }}">
+                    <span class="nwcm-brand__icon">NW</span>
+                    <span class="nwcm-brand__text">
+                        <span>{{ $gs->title ?? 'Cargo Marketplace' }}</span>
+                        <small>Cloud Commerce Platform</small>
+                    </span>
+                </a>
+
+                <nav class="nwcm-nav" aria-label="Primary">
+                    <a href="{{ url('/') }}">{{ __('Home') }}</a>
+                    <a href="{{ url('/catalog') }}">{{ __('Catalog') }}</a>
+                    <a href="{{ url('/contact') }}">{{ __('Contact') }}</a>
+                    <a href="{{ url('/track-order') }}">{{ __('Track Order') }}</a>
+                </nav>
+
+                <div class="nwcm-header__actions">
+                    @auth
+                        <a class="nwcm-btn nwcm-btn--secondary" href="{{ url('/dashboard') }}">{{ __('Dashboard') }}</a>
+                        <a class="nwcm-btn nwcm-btn--primary" href="{{ url('/logout') }}">{{ __('Sign Out') }}</a>
+                    @else
+                        <a class="nwcm-btn nwcm-btn--secondary" href="{{ url('/login') }}">{{ __('Sign In') }}</a>
+                        <a class="nwcm-btn nwcm-btn--primary" href="{{ url('/register') }}">{{ __('Get Started') }}</a>
+                    @endauth
+                </div>
+
+                <button class="nwcm-header__toggle" type="button" aria-label="{{ __('Toggle navigation') }}" data-header-toggle>
+                    <span class="fas fa-bars"></span>
+                </button>
+            </div>
+        </header>
 
         <div class="loader">
             <div class="spinner"></div>
@@ -191,6 +396,21 @@
         }
     })();
 
+</script>
+
+<script>
+    (function initHeaderToggle() {
+        var header = document.querySelector('[data-header]');
+        var toggle = document.querySelector('[data-header-toggle]');
+
+        if (!header || !toggle) {
+            return;
+        }
+
+        toggle.addEventListener('click', function () {
+            header.classList.toggle('is-open');
+        });
+    })();
 </script>
 
 

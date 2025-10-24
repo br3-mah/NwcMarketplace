@@ -7,7 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Notification extends Model
 {
 
-    protected $fillable = ['order_id','user_id','vendor_id','product_id','conversation_id'];
+    protected $fillable = [
+        'order_id',
+        'user_id',
+        'vendor_id',
+        'product_id',
+        'conversation_id',
+        'data',
+    ];
+
+    protected $casts = [
+        'data' => 'array',
+    ];
 
     public function order()
     {
