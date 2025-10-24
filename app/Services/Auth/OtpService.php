@@ -17,7 +17,7 @@ class OtpService
 
     private const DEFAULT_CODE_LENGTH = 6;
     private const DEFAULT_EXPIRY_MINUTES = 10;
-    private const DEFAULT_COOLDOWN_SECONDS = 60;
+    private const DEFAULT_COOLDOWN_SECONDS = 5;
     private const DEFAULT_MAX_ATTEMPTS = 5;
 
     public function issue(

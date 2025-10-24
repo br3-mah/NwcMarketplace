@@ -16,8 +16,10 @@ class PhoneAuthController extends Controller
     {
     }
 
-    public function signIn(PhoneSignInRequest $request): JsonResponse
+    public function signIn(PhoneSignInRequest $request, string $role): JsonResponse
     {
+        $role = strtolower($role);
+
         [$user, $otp] = $this->signInService->startPhone($request->validated());
 
         $response = [
@@ -28,6 +30,7 @@ class PhoneAuthController extends Controller
             'data' => [
                 'user_id' => $user->id,
                 'channel' => OtpService::CHANNEL_PHONE,
+                'role' => $role,
                 'identifier' => $otp->identifier,
                 'expires_at' => $otp->expires_at?->toIso8601String(),
             ],

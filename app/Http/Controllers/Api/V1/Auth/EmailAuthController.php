@@ -17,8 +17,10 @@ class EmailAuthController extends Controller
     {
     }
 
-    public function signIn(EmailSignInRequest $request): JsonResponse
+    public function signIn(EmailSignInRequest $request, string $role): JsonResponse
     {
+        $role = strtolower($role);
+
         [$user, $otp] = $this->signInService->startEmail($request->validated());
 
         $response = [
@@ -29,6 +31,7 @@ class EmailAuthController extends Controller
             'data' => [
                 'user_id' => $user->id,
                 'channel' => OtpService::CHANNEL_EMAIL,
+                'role' => $role,
                 'identifier' => $otp->identifier,
                 'expires_at' => $otp->expires_at?->toIso8601String(),
             ],

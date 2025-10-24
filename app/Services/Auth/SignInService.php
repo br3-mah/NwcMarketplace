@@ -3,10 +3,13 @@
 namespace App\Services\Auth;
 
 use App\Helpers\AuthHelper;
+use App\Mail\OtpCodeMail;
 use App\Models\User;
 use App\Models\UserAuthCode;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class SignInService
@@ -90,7 +93,7 @@ class SignInService
         $firstName = trim((string) $input['fname']);
         $lastName = trim((string) $input['lname']);
 
-        return DB::transaction(function () use ($email, $gender, $firstName, $lastName) {
+        [$user, $otp] = DB::transaction(function () use ($email, $gender, $firstName, $lastName) {
             $user = User::firstOrNew(['email' => $email]);
 
             $user->fname = $firstName;
@@ -119,6 +122,10 @@ class SignInService
 
             return [$user, $otp];
         });
+
+        $this->sendEmailOtp($user, $otp);
+
+        return [$user, $otp];
     }
 
     public function resendEmail(string $email): UserAuthCode
@@ -139,7 +146,7 @@ class SignInService
             ]);
         }
 
-        return $this->otpService->issue(
+        $otp = $this->otpService->issue(
             OtpService::CHANNEL_EMAIL,
             $normalizedEmail,
             [
@@ -148,6 +155,10 @@ class SignInService
             ],
             $user
         );
+
+        $this->sendEmailOtp($user, $otp);
+
+        return $otp;
     }
 
     public function verifyEmail(string $email, string $otpCode): array
@@ -170,5 +181,23 @@ class SignInService
         $token = $user->createToken('api')->plainTextToken;
 
         return [$user, $token];
+    }
+
+    private function sendEmailOtp(User $user, UserAuthCode $otp): void
+    {
+        if (!$user->email) {
+            return;
+        }
+
+        try {
+            Mail::to($user->email)->send(new OtpCodeMail($otp));
+        } catch (\Throwable $exception) {
+            Log::error('Failed to send OTP email.', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'otp_id' => $otp->id,
+                'message' => $exception->getMessage(),
+            ]);
+        }
     }
 }
