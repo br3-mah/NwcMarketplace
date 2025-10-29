@@ -100,173 +100,165 @@
 
     @yield('css')
     <style>
-        .nwcm-header {
+        .nw-header {
             position: sticky;
             top: 0;
             z-index: 1030;
-            background: rgba(11, 31, 51, 0.96);
-            backdrop-filter: blur(18px);
+            background: rgba(1, 12, 24, 0.92);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
         }
 
-        .nwcm-header__inner {
+        .nw-header__inner {
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: .85rem clamp(1.25rem, 4vw, 3rem);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 1rem clamp(1.5rem, 4vw, 3.5rem);
             gap: 1.5rem;
         }
 
-        .nwcm-brand {
+        .nw-brand {
             display: inline-flex;
-            gap: .75rem;
             align-items: center;
+            gap: .75rem;
             text-decoration: none;
         }
 
-        .nwcm-brand__icon {
+        .nw-brand__icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #31c6f4, #0b85c4);
-            color: #f6fbff;
+            background: linear-gradient(135deg, #24befd, #0a7edc);
+            color: #f8fbff;
             font-weight: 700;
-            letter-spacing: 1px;
+            font-size: .9rem;
+            letter-spacing: .08em;
         }
 
-        .nwcm-brand__text span {
+        .nw-brand__text span {
             display: block;
             font-weight: 600;
-            color: #f6fbff;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+            color: #f8fbff;
+            letter-spacing: .02em;
         }
 
-        .nwcm-brand__text small {
+        .nw-brand__text small {
             display: block;
-            margin-top: .15rem;
-            font-size: .8rem;
+            margin-top: .05rem;
+            font-size: .78rem;
             color: rgba(255, 255, 255, 0.58);
-            letter-spacing: .04em;
+            letter-spacing: .08em;
         }
 
-        .nwcm-nav {
+        .nw-nav {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1.25rem;
+            margin-left: auto;
         }
 
-        .nwcm-nav a {
+        .nw-nav a {
             position: relative;
-            font-size: .95rem;
+            padding: .45rem .6rem;
+            border-radius: 8px;
+            font-size: .94rem;
             font-weight: 500;
             color: rgba(255, 255, 255, 0.72);
             text-decoration: none;
-            padding-bottom: .15rem;
+            transition: background .2s ease, color .2s ease;
         }
 
-        .nwcm-nav a::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -4px;
-            width: 100%;
-            height: 2px;
-            background: #31c6f4;
-            transform: scaleX(0);
-            transform-origin: center;
-            transition: transform .2s ease;
+        .nw-nav a:hover,
+        .nw-nav a:focus {
+            background: rgba(36, 190, 253, 0.14);
+            color: #f8fbff;
         }
 
-        .nwcm-nav a:hover,
-        .nwcm-nav a:focus {
-            color: #f6fbff;
-        }
-
-        .nwcm-nav a:hover::after,
-        .nwcm-nav a:focus::after {
-            transform: scaleX(1);
-        }
-
-        .nwcm-header__actions {
+        .nw-header__actions {
             display: flex;
-            gap: .75rem;
             align-items: center;
+            gap: .7rem;
+            margin-left: 1rem;
         }
 
-        .nwcm-btn {
+        .nw-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border-radius: 999px;
-            padding: .55rem 1.4rem;
+            padding: .5rem 1.25rem;
+            font-size: .88rem;
             font-weight: 600;
-            font-size: .9rem;
-            border: 1px solid transparent;
             text-decoration: none;
+            border: 1px solid transparent;
             transition: transform .2s ease, box-shadow .2s ease;
         }
 
-        .nwcm-btn--secondary {
+        .nw-btn--ghost {
             color: rgba(255, 255, 255, 0.78);
-            border-color: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.18);
         }
 
-        .nwcm-btn--primary {
-            color: #0b1f33;
-            background: #31c6f4;
-            box-shadow: 0 10px 25px rgba(49, 198, 244, 0.25);
+        .nw-btn--primary {
+            color: #051626;
+            background: linear-gradient(135deg, #24befd, #0a7edc);
+            box-shadow: 0 14px 28px rgba(36, 190, 253, 0.2);
         }
 
-        .nwcm-btn:hover,
-        .nwcm-btn:focus {
+        .nw-btn:hover,
+        .nw-btn:focus {
             transform: translateY(-1px);
         }
 
-        .nwcm-btn--primary:hover,
-        .nwcm-btn--primary:focus {
-            box-shadow: 0 14px 28px rgba(49, 198, 244, 0.28);
+        .nw-btn--primary:hover,
+        .nw-btn--primary:focus {
+            box-shadow: 0 16px 32px rgba(36, 190, 253, 0.26);
         }
 
-        .nwcm-header__toggle {
+        .nw-header__toggle {
             display: none;
             background: none;
-            border: none;
-            color: #f6fbff;
-            font-size: 1.5rem;
+            border: 0;
+            color: #f8fbff;
+            font-size: 1.35rem;
+            margin-left: auto;
         }
 
         @media (max-width: 992px) {
-            .nwcm-nav,
-            .nwcm-header__actions {
-                display: none;
-            }
-
-            .nwcm-header__toggle {
-                display: inline-flex;
-            }
-
-            .nwcm-header.is-open .nwcm-nav,
-            .nwcm-header.is-open .nwcm-header__actions {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                width: 100%;
-                padding: 1rem clamp(1.5rem, 4vw, 3.5rem) 1.5rem;
+            .nw-header__inner {
+                flex-wrap: wrap;
                 gap: 1rem;
             }
 
-            .nwcm-header.is-open .nwcm-nav {
-                border-top: 1px solid rgba(255, 255, 255, 0.12);
-                padding-top: 1.25rem;
-            }
-
-            .nwcm-header.is-open .nwcm-nav a::after {
+            .nw-nav,
+            .nw-header__actions {
                 display: none;
+                width: 100%;
             }
 
-            .nwcm-header.is-open .nwcm-header__actions {
+            .nw-header__toggle {
+                display: inline-flex;
+            }
+
+            .nw-header.is-open .nw-nav,
+            .nw-header.is-open .nw-header__actions {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding-top: .75rem;
+            }
+
+            .nw-header.is-open .nw-nav {
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                padding-top: 1rem;
+            }
+
+            .nw-header.is-open .nw-header__actions {
                 border-top: 1px solid rgba(255, 255, 255, 0.12);
                 padding-top: 1rem;
             }
@@ -275,34 +267,35 @@
 </head>
 <body>
     <div id="page_wrapper" class="bg-white">
-        <header class="nwcm-header" data-header>
-            <div class="nwcm-header__inner">
-                <a class="nwcm-brand" href="{{ url('/') }}">
-                    <span class="nwcm-brand__icon">NW</span>
-                    <span class="nwcm-brand__text">
-                        <span>{{ $gs->title ?? 'Cargo Marketplace' }}</span>
-                        <small>Cloud Commerce Platform</small>
+        <header class="nw-header" data-header>
+            <div class="nw-header__inner">
+                <a class="nw-brand" href="{{ url('/') }}" aria-label="{{ $gs->title ?? 'Newworld Market' }}">
+                    <span class="nw-brand__icon">NM</span>
+                    <span class="nw-brand__text">
+                        <span>{{ $gs->title ?? 'Newworld Market' }}</span>
+                        <small>{{ __('Cargo Cloud Marketplace') }}</small>
                     </span>
                 </a>
 
-                <nav class="nwcm-nav" aria-label="Primary">
+                <nav class="nw-nav" aria-label="{{ __('Primary navigation') }}">
                     <a href="{{ url('/') }}">{{ __('Home') }}</a>
-                    <a href="{{ url('/catalog') }}">{{ __('Catalog') }}</a>
+                    <a href="{{ url('/catalog') }}">{{ __('Marketplace') }}</a>
                     <a href="{{ url('/contact') }}">{{ __('Contact') }}</a>
-                    <a href="{{ url('/track-order') }}">{{ __('Track Order') }}</a>
+                    <a href="{{ url('/order/track') }}">{{ __('Track Order') }}</a>
+                    <a href="{{ route('api.documentation') }}">{{ __('API Docs') }}</a>
                 </nav>
 
-                <div class="nwcm-header__actions">
+                <div class="nw-header__actions">
                     @auth
-                        <a class="nwcm-btn nwcm-btn--secondary" href="{{ url('/dashboard') }}">{{ __('Dashboard') }}</a>
-                        <a class="nwcm-btn nwcm-btn--primary" href="{{ url('/logout') }}">{{ __('Sign Out') }}</a>
+                        <a class="nw-btn nw-btn--ghost" href="{{ url('/dashboard') }}">{{ __('Dashboard') }}</a>
+                        <a class="nw-btn nw-btn--primary" href="{{ url('/logout') }}">{{ __('Sign Out') }}</a>
                     @else
-                        <a class="nwcm-btn nwcm-btn--secondary" href="{{ url('/login') }}">{{ __('Sign In') }}</a>
-                        <a class="nwcm-btn nwcm-btn--primary" href="{{ url('/register') }}">{{ __('Get Started') }}</a>
+                        <a class="nw-btn nw-btn--ghost" href="{{ url('/login') }}">{{ __('Sign In') }}</a>
+                        <a class="nw-btn nw-btn--primary" href="{{ url('/register') }}">{{ __('Create Account') }}</a>
                     @endauth
                 </div>
 
-                <button class="nwcm-header__toggle" type="button" aria-label="{{ __('Toggle navigation') }}" data-header-toggle>
+                <button class="nw-header__toggle" type="button" aria-label="{{ __('Toggle menu') }}" data-header-toggle>
                     <span class="fas fa-bars"></span>
                 </button>
             </div>

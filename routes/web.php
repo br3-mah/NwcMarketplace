@@ -1429,6 +1429,11 @@ Route::post('/item/report', 'Front\CatalogController@report')->name('product.rep
     Route::get('/blog/archive/{slug}','Front\FrontendController@blogarchive')->name('front.blogarchive');
     // BLOG SECTION ENDS
 
+    // API DOCUMENTATION
+    Route::get('/api-docs', function () {
+        return response()->file(public_path('api-documentation.html'));
+    })->name('api.documentation');
+
     // FAQ SECTION
     Route::get('/faq','Front\FrontendController@faq')->name('front.faq');
     // FAQ SECTION ENDS

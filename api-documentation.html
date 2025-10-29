@@ -1,0 +1,1437 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Market API Documentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e9ecef;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            max-width: calc(100% - 280px);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section {
+            background: white;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .section-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .endpoint {
+            border-bottom: 1px solid #eee;
+            padding: 20px;
+        }
+        .endpoint:last-child {
+            border-bottom: none;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+        .method.GET { background: #61affe; color: white; }
+        .method.POST { background: #49cc90; color: white; }
+        .method.PUT { background: #fca130; color: white; }
+        .method.DELETE { background: #f93e3e; color: white; }
+        .method.PATCH { background: #50e3c2; color: white; }
+        .url {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+        .description {
+            color: #666;
+            margin: 10px 0;
+        }
+        .auth-required {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        .code-block h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .parameter-table th, .parameter-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .parameter-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .required { color: #dc3545; font-weight: bold; }
+        .optional { color: #6c757d; }
+        .response-code {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+        .response-code.success { background: #d4edda; color: #155724; }
+        .response-code.error { background: #f8d7da; color: #721c24; }
+        .response-code.info { background: #d1ecf1; color: #0c5460; }
+        .toc {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        .toc li {
+            margin: 5px 0;
+        }
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .toc .sub-list {
+            margin-left: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="toc">
+                <h3>Table of Contents</h3>
+                <ul>
+                    <li><a href="#authentication">Authentication</a>
+                        <ul class="sub-list">
+                            <li><a href="#phone-auth">Phone Authentication</a></li>
+                            <li><a href="#email-auth">Email Authentication</a></li>
+                            <li><a href="#user-info">User Information</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#cart">Shopping Cart</a></li>
+                    <li><a href="#checkout">Checkout & Orders</a></li>
+                    <li><a href="#shipping">Shipping</a></li>
+                    <li><a href="#shipments">Shipments</a></li>
+                    <li><a href="#payments">Payments</a></li>
+                    <li><a href="#notifications">Notifications</a></li>
+                    <li><a href="#disputes">Disputes</a></li>
+                    <li><a href="#returns">Returns</a></li>
+                    <li><a href="#conversations">Conversations</a></li>
+                    <li><a href="#users">Users</a></li>
+                    <li><a href="#integrations">Integrations</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Cargo Market API Documentation</h1>
+                <p>Version 1.0 - Laravel API for E-commerce Platform</p>
+                <p>Base URL: <code>https://your-domain.com/api/v1</code></p>
+            </div>
+
+    <!-- Authentication Section -->
+    <div id="authentication" class="section">
+        <h2 class="section-header">Authentication</h2>
+
+        <!-- Phone Authentication -->
+        <div id="phone-auth" class="endpoint">
+            <h3>Phone Authentication</h3>
+
+            <div class="endpoint">
+                <span class="method POST">POST</span>
+                <div class="url">/signin/{role}/phone</div>
+                <div class="description">Initiate phone number sign-in process</div>
+                <div class="auth-required">No authentication required</div>
+
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                    <tr><td>role</td><td>string</td><td class="required">Yes</td><td>Role: admin, user, vendor</td></tr>
+                    <tr><td>phone</td><td>string</td><td class="required">Yes</td><td>Phone number</td></tr>
+                </table>
+
+                <h4>Request Example</h4>
+                <div class="code-block">
+{
+    "phone": "+1234567890"
+}
+                </div>
+
+                <h4>Response (200)</h4>
+                <div class="code-block">
+{
+    "message": "Welcome back! OTP sent to +1234567890",
+    "data": {
+        "user_id": 1,
+        "channel": "phone",
+        "role": "user",
+        "identifier": "+1234567890",
+        "expires_at": "2025-10-29T23:00:00.000000Z",
+        "is_existing_user": true,
+        "has_role": true
+    },
+    "debug": {
+        "otp": "123456"
+    }
+}
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method POST">POST</span>
+                <div class="url">/verify/phone</div>
+                <div class="description">Verify phone number with OTP</div>
+                <div class="auth-required">No authentication required</div>
+
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                    <tr><td>phone</td><td>string</td><td class="required">Yes</td><td>Phone number</td></tr>
+                    <tr><td>otp</td><td>string</td><td class="required">Yes</td><td>OTP code</td></tr>
+                </table>
+
+                <h4>Response (200)</h4>
+                <div class="code-block">
+{
+    "message": "Phone number verified successfully.",
+    "data": {
+        "id": 1,
+        "name": "John Doe",
+        "fname": "John",
+        "lname": "Doe",
+        "gender": "male",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "phone_verified_at": "2025-10-29T22:40:00.000000Z",
+        "email_verified_at": null,
+        "roles": ["user"]
+    },
+    "token": {
+        "token_type": "Bearer",
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+    }
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Authentication -->
+        <div id="email-auth" class="endpoint">
+            <h3>Email Authentication</h3>
+
+            <div class="endpoint">
+                <span class="method POST">POST</span>
+                <div class="url">/signin/{role}/email</div>
+                <div class="description">Initiate email sign-in process</div>
+                <div class="auth-required">No authentication required</div>
+
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                    <tr><td>role</td><td>string</td><td class="required">Yes</td><td>Role: admin, user, vendor</td></tr>
+                    <tr><td>email</td><td>string</td><td class="required">Yes</td><td>Email address</td></tr>
+                </table>
+
+                <h4>Response (200)</h4>
+                <div class="code-block">
+{
+    "message": "Welcome back! OTP sent to john@example.com",
+    "data": {
+        "user_id": 1,
+        "channel": "email",
+        "role": "user",
+        "identifier": "john@example.com",
+        "expires_at": "2025-10-29T23:00:00.000000Z",
+        "is_existing_user": true,
+        "has_role": true
+    },
+    "debug": {
+        "otp": "123456"
+    }
+}
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method POST">POST</span>
+                <div class="url">/verify/email</div>
+                <div class="description">Verify email with OTP</div>
+                <div class="auth-required">No authentication required</div>
+
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                    <tr><td>email</td><td>string</td><td class="required">Yes</td><td>Email address</td></tr>
+                    <tr><td>otp</td><td>string</td><td class="required">Yes</td><td>OTP code</td></tr>
+                </table>
+
+                <h4>Response (200)</h4>
+                <div class="code-block">
+{
+    "message": "Email verified successfully.",
+    "data": {
+        "id": 1,
+        "name": "John Doe",
+        "fname": "John",
+        "lname": "Doe",
+        "gender": "male",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "phone_verified_at": "2025-10-29T22:40:00.000000Z",
+        "email_verified_at": "2025-10-29T22:41:00.000000Z",
+        "roles": ["user"]
+    },
+    "token": {
+        "token_type": "Bearer",
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+    }
+}
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method POST">POST</span>
+                <div class="url">/resend/email</div>
+                <div class="description">Resend email OTP</div>
+                <div class="auth-required">No authentication required</div>
+
+                <h4>Parameters</h4>
+                <table class="parameter-table">
+                    <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                    <tr><td>email</td><td>string</td><td class="required">Yes</td><td>Email address</td></tr>
+                </table>
+
+                <h4>Response (200)</h4>
+                <div class="code-block">
+{
+    "message": "OTP resent to john@example.com",
+    "data": {
+        "channel": "email",
+        "identifier": "john@example.com",
+        "expires_at": "2025-10-29T23:05:00.000000Z"
+    },
+    "debug": {
+        "otp": "654321"
+    }
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- User Info -->
+        <div id="user-info" class="endpoint">
+            <h3>User Information</h3>
+
+            <div class="endpoint">
+                <span class="method GET">GET</span>
+                <div class="url">/auth/me</div>
+                <div class="description">Get authenticated user information</div>
+                <div class="auth-required">Requires Bearer token</div>
+
+                <h4>Response (200)</h4>
+                <div class="code-block">
+{
+    "message": "Authenticated user retrieved successfully.",
+    "data": {
+        "id": 1,
+        "name": "John Doe",
+        "fname": "John",
+        "lname": "Doe",
+        "gender": "male",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "phone_verified_at": "2025-10-29T22:40:00.000000Z",
+        "email_verified_at": "2025-10-29T22:41:00.000000Z",
+        "roles": ["user"],
+        "addresses": [],
+        "orders_count": 5,
+        "wishlist_count": 12
+    }
+}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div id="categories" class="section">
+        <h2 class="section-header">Categories</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/categories</div>
+            <div class="description">List all categories</div>
+            <div class="auth-required">No authentication required</div>
+
+            <h4>Query Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>status</td><td>string</td><td class="optional">No</td><td>Filter by status</td></tr>
+                <tr><td>q</td><td>string</td><td class="optional">No</td><td>Search query</td></tr>
+            </table>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "message": "Categories retrieved successfully.",
+    "data": [
+        {
+            "id": 1,
+            "name": "Electronics",
+            "slug": "electronics",
+            "status": "active",
+            "created_at": "2025-01-01T00:00:00.000000Z"
+        }
+    ]
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/categories</div>
+            <div class="description">Create a new category</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>name</td><td>string</td><td class="required">Yes</td><td>Category name</td></tr>
+                <tr><td>slug</td><td>string</td><td class="optional">No</td><td>URL slug</td></tr>
+                <tr><td>status</td><td>string</td><td class="optional">No</td><td>Status (active/inactive)</td></tr>
+            </table>
+
+            <h4>Response (201)</h4>
+            <div class="code-block">
+{
+    "message": "Category created successfully.",
+    "data": {
+        "id": 2,
+        "name": "Books",
+        "slug": "books",
+        "status": "active",
+        "created_at": "2025-10-29T22:45:00.000000Z"
+    }
+}
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div id="products" class="section">
+        <h2 class="section-header">Products</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/products</div>
+            <div class="description">List products with filtering and pagination</div>
+            <div class="auth-required">No authentication required</div>
+
+            <h4>Query Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>category_id</td><td>integer</td><td class="optional">No</td><td>Filter by category</td></tr>
+                <tr><td>min_price</td><td>number</td><td class="optional">No</td><td>Minimum price</td></tr>
+                <tr><td>max_price</td><td>number</td><td class="optional">No</td><td>Maximum price</td></tr>
+                <tr><td>search</td><td>string</td><td class="optional">No</td><td>Search in name/description</td></tr>
+                <tr><td>per_page</td><td>integer</td><td class="optional">No</td><td>Items per page (max 100)</td></tr>
+            </table>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "message": "Products retrieved successfully.",
+    "data": [
+        {
+            "id": 1,
+            "name": "iPhone 15",
+            "price": 999.99,
+            "category": {
+                "id": 1,
+                "name": "Electronics"
+            },
+            "images": [
+                {
+                    "id": 1,
+                    "url": "https://example.com/images/iphone.jpg"
+                }
+            ],
+            "stock": 50,
+            "status": "active"
+        }
+    ],
+    "links": {
+        "first": "http://localhost:8000/api/v1/products?page=1",
+        "last": "http://localhost:8000/api/v1/products?page=5",
+        "prev": null,
+        "next": "http://localhost:8000/api/v1/products?page=2"
+    },
+    "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 5,
+        "per_page": 20,
+        "to": 20,
+        "total": 100
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/products/{product}</div>
+            <div class="description">Get single product details</div>
+            <div class="auth-required">No authentication required</div>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "message": "Product retrieved successfully.",
+    "data": {
+        "id": 1,
+        "name": "iPhone 15",
+        "description": "Latest iPhone model",
+        "price": 999.99,
+        "stock": 50,
+        "sku": "IPH15-128",
+        "category": {
+            "id": 1,
+            "name": "Electronics"
+        },
+        "images": [],
+        "attributes": [],
+        "reviews": [],
+        "rating": 4.5
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/products</div>
+            <div class="description">Create a new product</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>name</td><td>string</td><td class="required">Yes</td><td>Product name</td></tr>
+                <tr><td>description</td><td>string</td><td class="optional">No</td><td>Product description</td></tr>
+                <tr><td>price</td><td>number</td><td class="required">Yes</td><td>Product price</td></tr>
+                <tr><td>category_id</td><td>integer</td><td class="required">Yes</td><td>Category ID</td></tr>
+                <tr><td>stock</td><td>integer</td><td class="optional">No</td><td>Stock quantity</td></tr>
+                <tr><td>sku</td><td>string</td><td class="optional">No</td><td>Stock keeping unit</td></tr>
+            </table>
+
+            <h4>Response (201)</h4>
+            <div class="code-block">
+{
+    "message": "Product created successfully.",
+    "data": {
+        "id": 2,
+        "name": "Samsung Galaxy S24",
+        "price": 899.99,
+        "stock": 30,
+        "sku": "SGS24-256",
+        "status": "active"
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/products/{product}</div>
+            <div class="description">Update product</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "message": "Product updated successfully.",
+    "data": {
+        "id": 1,
+        "name": "iPhone 15 Pro",
+        "price": 1099.99
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method DELETE">DELETE</span>
+            <div class="url">/products/{product}</div>
+            <div class="description">Delete product</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Response (204)</h4>
+            <div class="code-block">No Content</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/search/products</div>
+            <div class="description">Search products</div>
+            <div class="auth-required">No authentication required</div>
+
+            <h4>Query Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>q</td><td>string</td><td class="required">Yes</td><td>Search query</td></tr>
+                <tr><td>category</td><td>string</td><td class="optional">No</td><td>Category filter</td></tr>
+                <tr><td>min_price</td><td>number</td><td class="optional">No</td><td>Minimum price</td></tr>
+                <tr><td>max_price</td><td>number</td><td class="optional">No</td><td>Maximum price</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Cart Section -->
+    <div id="cart" class="section">
+        <h2 class="section-header">Shopping Cart</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/carts/{buyer}</div>
+            <div class="description">Get user's cart</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "data": {
+        "items": [
+            {
+                "item_id": "1__0",
+                "product_id": 1,
+                "name": "iPhone 15",
+                "quantity": 1,
+                "unit_price": 999.99,
+                "line_total": 999.99,
+                "size": null,
+                "color": null,
+                "attributes": [],
+                "discount_percentage": 0,
+                "affiliate_user": 0,
+                "is_digital": "0"
+            }
+        ],
+        "total_quantity": 1,
+        "total_price": 999.99
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/carts/{buyer}/items</div>
+            <div class="description">Add item to cart</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>product_id</td><td>integer</td><td class="required">Yes</td><td>Product ID</td></tr>
+                <tr><td>qty</td><td>integer</td><td class="optional">No</td><td>Quantity (default: 1)</td></tr>
+                <tr><td>size</td><td>string</td><td class="optional">No</td><td>Size variant</td></tr>
+                <tr><td>color</td><td>string</td><td class="optional">No</td><td>Color variant</td></tr>
+            </table>
+
+            <h4>Response (201)</h4>
+            <div class="code-block">
+{
+    "message": "Item added to cart.",
+    "data": {
+        "items": [...],
+        "total_quantity": 2,
+        "total_price": 1999.98
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/carts/{buyer}/items/{item}</div>
+            <div class="description">Update cart item quantity</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>qty</td><td>integer</td><td class="required">Yes</td><td>New quantity</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method DELETE">DELETE</span>
+            <div class="url">/carts/{buyer}/items/{item}</div>
+            <div class="description">Remove item from cart</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "message": "Item removed from cart.",
+    "data": {
+        "items": [],
+        "total_quantity": 0,
+        "total_price": 0
+    }
+}
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout & Orders Section -->
+    <div id="checkout" class="section">
+        <h2 class="section-header">Checkout & Orders</h2>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/checkout/estimate</div>
+            <div class="description">Estimate checkout totals</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>items</td><td>array</td><td class="required">Yes</td><td>Cart items array</td></tr>
+                <tr><td>shipping_cost</td><td>number</td><td class="optional">No</td><td>Shipping cost</td></tr>
+                <tr><td>currency</td><td>string</td><td class="optional">No</td><td>Currency code</td></tr>
+            </table>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "message": "Checkout estimate generated successfully.",
+    "data": {
+        "items": [...],
+        "subtotal": 999.99,
+        "shipping_cost": 10.00,
+        "tax": 0,
+        "total": 1009.99,
+        "currency": {
+            "code": "USD",
+            "sign": "$",
+            "value": 1
+        },
+        "totals": {
+            "quantity": 1,
+            "subtotal_raw": 999.99,
+            "total_raw": 1009.99
+        }
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/checkout/create-order</div>
+            <div class="description">Create order from cart</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>items</td><td>array</td><td class="required">Yes</td><td>Cart items</td></tr>
+                <tr><td>payment_method</td><td>string</td><td class="required">Yes</td><td>Payment method</td></tr>
+                <tr><td>shipping_method</td><td>string</td><td class="required">Yes</td><td>Shipping method</td></tr>
+                <tr><td>customer</td><td>object</td><td class="required">Yes</td><td>Customer details</td></tr>
+                <tr><td>shipping</td><td>object</td><td class="optional">No</td><td>Shipping details</td></tr>
+            </table>
+
+            <h4>Response (201)</h4>
+            <div class="code-block">
+{
+    "data": {
+        "id": 1,
+        "order_number": "ABC123456789",
+        "status": "pending",
+        "total": 1009.99,
+        "customer_name": "John Doe",
+        "customer_email": "john@example.com",
+        "created_at": "2025-10-29T22:50:00.000000Z"
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/orders</div>
+            <div class="description">List user orders</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Query Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>role</td><td>string</td><td class="optional">No</td><td>Role: buyer, seller, admin</td></tr>
+                <tr><td>status</td><td>string</td><td class="optional">No</td><td>Order status filter</td></tr>
+                <tr><td>q</td><td>string</td><td class="optional">No</td><td>Search query</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/orders/{orderNumber}</div>
+            <div class="description">Get order details</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/orders/{orderNumber}/cancel</div>
+            <div class="description">Cancel order</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>reason</td><td>string</td><td class="optional">No</td><td>Cancellation reason</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/orders/{orderNumber}/status</div>
+            <div class="description">Update order status</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>role</td><td>string</td><td class="optional">No</td><td>Role: seller, admin</td></tr>
+                <tr><td>status</td><td>string</td><td class="required">Yes</td><td>New status</td></tr>
+                <tr><td>note</td><td>string</td><td class="optional">No</td><td>Status update note</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/orders/{orderNumber}/confirm-delivery</div>
+            <div class="description">Confirm order delivery</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>confirmation</td><td>boolean</td><td class="required">Yes</td><td>Delivery confirmation</td></tr>
+                <tr><td>note</td><td>string</td><td class="optional">No</td><td>Delivery note</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/orders/{orderNumber}/timeline</div>
+            <div class="description">Get order timeline</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+    </div>
+
+    <!-- Shipping Section -->
+    <div id="shipping" class="section">
+        <h2 class="section-header">Shipping</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/shipping/services</div>
+            <div class="description">Get available shipping services</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "data": [
+        {
+            "id": 1,
+            "code": "1",
+            "title": "Standard Shipping",
+            "subtitle": "3-5 business days",
+            "price": 10.99
+        }
+    ]
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/shipping/hubs</div>
+            <div class="description">Get pickup locations</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Downtown Hub"
+        }
+    ]
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/shipping/quotes</div>
+            <div class="description">Get shipping quotes</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>service_code</td><td>string</td><td class="optional">No</td><td>Specific service code</td></tr>
+                <tr><td>items</td><td>array</td><td class="required">Yes</td><td>Items to ship</td></tr>
+            </table>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "data": {
+        "service": {
+            "id": 1,
+            "code": "1",
+            "title": "Standard Shipping",
+            "subtitle": "3-5 business days"
+        },
+        "breakdown": {
+            "base": 10.99,
+            "weight_component": 2.5,
+            "value_component": 5.0
+        },
+        "estimated_cost": 18.49,
+        "currency": {
+            "code": "USD",
+            "sign": "$",
+            "value": 1
+        }
+    }
+}
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipments Section -->
+    <div id="shipments" class="section">
+        <h2 class="section-header">Shipments</h2>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/shipments</div>
+            <div class="description">Create shipment</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>order_id</td><td>integer</td><td class="optional">No</td><td>Associated order ID</td></tr>
+                <tr><td>tracking_number</td><td>string</td><td class="required">Yes</td><td>Tracking number</td></tr>
+                <tr><td>service_code</td><td>string</td><td class="required">Yes</td><td>Shipping service code</td></tr>
+                <tr><td>service_name</td><td>string</td><td class="required">Yes</td><td>Shipping service name</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/shipments/{shipment}</div>
+            <div class="description">Get shipment details</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/shipments/{shipment}/events</div>
+            <div class="description">Get shipment events</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/shipments/{shipment}/cancel</div>
+            <div class="description">Cancel shipment</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>reason</td><td>string</td><td class="required">Yes</td><td>Cancellation reason</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/pod/{shipment}</div>
+            <div class="description">Store proof of delivery</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>signed_by</td><td>string</td><td class="required">Yes</td><td>Person who signed</td></tr>
+                <tr><td>signed_at</td><td>string</td><td class="optional">No</td><td>Signature timestamp</td></tr>
+                <tr><td>attachments</td><td>array</td><td class="optional">No</td><td>Proof attachments</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/pod/{shipment}</div>
+            <div class="description">Get proof of delivery</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+    </div>
+
+    <!-- Payments Section -->
+    <div id="payments" class="section">
+        <h2 class="section-header">Payments</h2>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/payments/proofs</div>
+            <div class="description">Submit payment proof</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>order_number</td><td>string</td><td class="required">Yes</td><td>Order number</td></tr>
+                <tr><td>reference</td><td>string</td><td class="required">Yes</td><td>Payment reference</td></tr>
+                <tr><td>details</td><td>object</td><td class="required">Yes</td><td>Payment details</td></tr>
+                <tr><td>attachments</td><td>array</td><td class="optional">No</td><td>Payment proof files</td></tr>
+            </table>
+
+            <h4>Response (201)</h4>
+            <div class="code-block">
+{
+    "data": {
+        "id": 1,
+        "order_id": 1,
+        "user_id": 1,
+        "reference": "PAY123456",
+        "status": "pending",
+        "created_at": "2025-10-29T22:55:00.000000Z"
+    }
+}
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/payments/proofs/{paymentProof}</div>
+            <div class="description">Get payment proof details</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/payments/proofs/{paymentProof}/verify</div>
+            <div class="description">Verify payment proof (Admin only)</div>
+            <div class="auth-required">Requires Bearer token (Admin)</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>status</td><td>string</td><td class="required">Yes</td><td>Status: verified, rejected</td></tr>
+                <tr><td>notes</td><td>string</td><td class="optional">No</td><td>Verification notes</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Notifications Section -->
+    <div id="notifications" class="section">
+        <h2 class="section-header">Notifications</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/notifications</div>
+            <div class="description">Get user notifications</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Query Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>scope</td><td>string</td><td class="optional">No</td><td>Scope: personal, all (admin)</td></tr>
+                <tr><td>unread</td><td>boolean</td><td class="optional">No</td><td>Show only unread</td></tr>
+                <tr><td>mark_read</td><td>boolean</td><td class="optional">No</td><td>Mark notifications as read</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/notifications/send</div>
+            <div class="description">Send notification (Admin only)</div>
+            <div class="auth-required">Requires Bearer token (Admin)</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>user_ids</td><td>array</td><td class="optional">No</td><td>User IDs to notify</td></tr>
+                <tr><td>vendor_ids</td><td>array</td><td class="optional">No</td><td>Vendor IDs to notify</td></tr>
+                <tr><td>title</td><td>string</td><td class="required">Yes</td><td>Notification title</td></tr>
+                <tr><td>message</td><td>string</td><td class="required">Yes</td><td>Notification message</td></tr>
+                <tr><td>order_id</td><td>integer</td><td class="optional">No</td><td>Related order ID</td></tr>
+                <tr><td>product_id</td><td>integer</td><td class="optional">No</td><td>Related product ID</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/notification-templates</div>
+            <div class="description">Get notification templates (Admin only)</div>
+            <div class="auth-required">Requires Bearer token (Admin)</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/notification-templates</div>
+            <div class="description">Create notification template (Admin only)</div>
+            <div class="auth-required">Requires Bearer token (Admin)</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/notification-templates/{template}</div>
+            <div class="description">Update notification template (Admin only)</div>
+            <div class="auth-required">Requires Bearer token (Admin)</div>
+        </div>
+    </div>
+
+    <!-- Disputes Section -->
+    <div id="disputes" class="section">
+        <h2 class="section-header">Disputes</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/disputes</div>
+            <div class="description">List disputes</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Query Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>role</td><td>string</td><td class="optional">No</td><td>Role: buyer, seller, admin</td></tr>
+                <tr><td>status</td><td>string</td><td class="optional">No</td><td>Dispute status</td></tr>
+                <tr><td>order_id</td><td>integer</td><td class="optional">No</td><td>Related order ID</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/disputes</div>
+            <div class="description">Create dispute</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>order_id</td><td>integer</td><td class="required">Yes</td><td>Order ID</td></tr>
+                <tr><td>seller_id</td><td>integer</td><td class="optional">No</td><td>Seller ID (auto-detected)</td></tr>
+                <tr><td>subject</td><td>string</td><td class="required">Yes</td><td>Dispute subject</td></tr>
+                <tr><td>reason</td><td>string</td><td class="required">Yes</td><td>Dispute reason</td></tr>
+                <tr><td>description</td><td>string</td><td class="required">Yes</td><td>Detailed description</td></tr>
+                <tr><td>attachments</td><td>array</td><td class="optional">No</td><td>Supporting files</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/disputes/{dispute}</div>
+            <div class="description">Get dispute details</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/disputes/{dispute}</div>
+            <div class="description">Update dispute (Admin/Seller only)</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/disputes/{dispute}/messages</div>
+            <div class="description">Add dispute message</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>message</td><td>string</td><td class="required">Yes</td><td>Message content</td></tr>
+                <tr><td>attachments</td><td>array</td><td class="optional">No</td><td>Message attachments</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Returns Section -->
+    <div id="returns" class="section">
+        <h2 class="section-header">Returns</h2>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/returns</div>
+            <div class="description">Create return request</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>order_id</td><td>integer</td><td class="required">Yes</td><td>Order ID</td></tr>
+                <tr><td>reason</td><td>string</td><td class="required">Yes</td><td>Return reason</td></tr>
+                <tr><td>notes</td><td>string</td><td class="optional">No</td><td>Additional notes</td></tr>
+                <tr><td>items</td><td>array</td><td class="required">Yes</td><td>Items to return</td></tr>
+                <tr><td>attachments</td><td>array</td><td class="optional">No</td><td>Supporting files</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/returns/{returnRequest}</div>
+            <div class="description">Get return request details</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/returns/{returnRequest}</div>
+            <div class="description">Update return request</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+    </div>
+
+    <!-- Conversations Section -->
+    <div id="conversations" class="section">
+        <h2 class="section-header">Conversations</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/conversations</div>
+            <div class="description">List user conversations</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Query Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>user_id</td><td>integer</td><td class="optional">No</td><td>Filter by other user</td></tr>
+                <tr><td>order_id</td><td>string</td><td class="optional">No</td><td>Filter by order</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/conversations</div>
+            <div class="description">Start new conversation</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>recipient_id</td><td>integer</td><td class="required">Yes</td><td>Recipient user ID</td></tr>
+                <tr><td>subject</td><td>string</td><td class="optional">No</td><td>Conversation subject</td></tr>
+                <tr><td>message</td><td>string</td><td class="required">Yes</td><td>Initial message</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/conversations/{conversation}/messages</div>
+            <div class="description">Get conversation messages</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/conversations/{conversation}/messages</div>
+            <div class="description">Send message in conversation</div>
+            <div class="auth-required">Requires Bearer token</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>message</td><td>string</td><td class="required">Yes</td><td>Message content</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Users Section -->
+    <div id="users" class="section">
+        <h2 class="section-header">Users</h2>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/users</div>
+            <div class="description">List users</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/users/{user}</div>
+            <div class="description">Get user details</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method PUT">PUT</span>
+            <div class="url">/users/{user}</div>
+            <div class="description">Update user</div>
+            <div class="auth-required">Requires Bearer token</div>
+        </div>
+    </div>
+
+    <!-- Integrations Section -->
+    <div id="integrations" class="section">
+        <h2 class="section-header">Integrations</h2>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/integrations/lms/webhooks</div>
+            <div class="description">LMS webhook endpoint</div>
+            <div class="auth-required">No authentication required</div>
+        </div>
+
+        <div class="endpoint">
+            <span class="method POST">POST</span>
+            <div class="url">/integrations/lms/shipments/sync</div>
+            <div class="description">Sync shipments with LMS</div>
+            <div class="auth-required">Requires Bearer token (Admin)</div>
+
+            <h4>Parameters</h4>
+            <table class="parameter-table">
+                <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>shipment_id</td><td>integer</td><td class="required">Yes</td><td>Shipment ID to sync</td></tr>
+                <tr><td>payload</td><td>object</td><td class="required">Yes</td><td>Sync payload</td></tr>
+            </table>
+        </div>
+
+        <div class="endpoint">
+            <span class="method GET">GET</span>
+            <div class="url">/integrations/lms/health</div>
+            <div class="description">Check LMS integration health</div>
+            <div class="auth-required">Requires Bearer token (Admin)</div>
+
+            <h4>Response (200)</h4>
+            <div class="code-block">
+{
+    "status": "ok",
+    "pending_jobs": 5,
+    "last_webhook_at": "2025-10-29T22:30:00.000000Z"
+}
+            </div>
+        </div>
+    </div>
+
+            <!-- Product Inventory Section -->
+            <div id="inventory" class="section">
+                <h2 class="section-header">Product Inventory</h2>
+
+                <div class="endpoint">
+                    <span class="method GET">GET</span>
+                    <div class="url">/products/{product}/inventory</div>
+                    <div class="description">Get product inventory</div>
+                    <div class="auth-required">Requires Bearer token</div>
+                </div>
+
+                <div class="endpoint">
+                    <span class="method PUT">PUT</span>
+                    <div class="url">/products/{product}/inventory</div>
+                    <div class="description">Update product inventory</div>
+                    <div class="auth-required">Requires Bearer token</div>
+                </div>
+
+                <div class="endpoint">
+                    <span class="method POST">POST</span>
+                    <div class="url">/products/{product}/images</div>
+                    <div class="description">Add product image</div>
+                    <div class="auth-required">Requires Bearer token</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
